@@ -28,8 +28,8 @@ foreign import ccall "ioctl" c_ioctl :: CInt -> CInt -> Ptr () -> IO CInt
 
 c_ioctl' :: IOControl req d => Socket -> req -> Ptr d -> IO ()
 c_ioctl' f req p =
-    throwErrnoIfMinus1_ "ioctl" $
-        c_ioctl (fdSocket f) (ioctlReq req) (castPtr p)
+    throwErrnoIfMinus1_ "ioctl" . withFdSocket f $ \fd ->
+        c_ioctl fd (ioctlReq req) (castPtr p)
 
 -- | Calls a ioctl reading the structure after the call
 ioctlsocket :: IOControl req d
